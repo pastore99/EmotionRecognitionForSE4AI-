@@ -1,0 +1,11 @@
+stages:
+  prepare:
+    cmd: python src/prepare.py data/FER2013
+    deps:
+    - data/FER2013
+    - src/preprocessing_augmentation.py
+    params:
+    - prepare.seed
+    - prepare.split
+    outs:
+    - data/preprocessed
