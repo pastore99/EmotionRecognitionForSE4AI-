@@ -1,11 +1,15 @@
 stages:
-  prepare:
-    cmd: python src/prepare.py data/FER2013
+  train:
+    cmd: python src/train.py
     deps:
     - data/FER2013
-    - src/preprocessing_augmentation.py
+    - src/train.py
     params:
-    - prepare.seed
-    - prepare.split
+    - train.batch_size
+    - train.decay
+    - train.learning_rate
+    - train.n_epoch
+    - train.seed
     outs:
-    - data/preprocessed
+    - model/emotion_model.h5
+    - model/emotion_model.json
