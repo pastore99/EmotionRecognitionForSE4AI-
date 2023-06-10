@@ -4,8 +4,8 @@ var stopBtn = document.getElementById('stopBtn');
 var stream;
 var mediaRecorder;
 var chunks = [];
-const url = 'http:localhost:5000/preprocess';
-const intervalID;
+const url = 'http://localhost:5001/preprocess';
+var intervalID;
 
 navigator.mediaDevices.getUserMedia({ video: true })
 .then(function (stream) {
@@ -70,6 +70,6 @@ function estrapolaImmagine() {
     })
     .then(response => response.json())
     .then(data => {console.log(data)})
-    ,catch(error => {console.error('Errore: ', error)})
+        .catch(error => {console.error('Errore: ', error)})
 }
 
