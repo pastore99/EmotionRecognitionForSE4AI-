@@ -34,28 +34,10 @@ learning_rate = params["learning_rate"]
 decay = params["decay"]
 batch_size = params["batch_size"]
 # Initialize image data generator with rescaling
-train_data_gen = ImageDataGenerator(rescale=1./255)  #prende ogni valore nella matrice i/255
-validation_data_gen = ImageDataGenerator(rescale=1./255)
+train_data_gen = ImageDataGenerator(rescale=1./255, validation_split=0.2)
 
-
-# Preprocess all test images
-train_generator = train_data_gen.flow_from_directory(
-        'data/FER2013/train',
-        target_size=(48, 48),
-        batch_size=batch_size,
-        color_mode="grayscale",
-        class_mode='categorical',
-        seed=seed)
-
-
-# Preprocess all train images
-validation_generator = validation_data_gen.flow_from_directory(
-        'data/FER2013/test',
-        target_size=(48, 48),
-        batch_size=batch_size,
-        color_mode="grayscale",
-        class_mode='categorical',
-        seed=seed)
+training_data = train_data_gen.flow_from_directory("data/FER2013/train", batch_size=64, target_size=(48, 48), shuffle=True, color_mode='grayscale', class_mode='categorical', subset='training',seed=seed)
+validation_set = train_data_gen.flow_from_directory("data/FER2013/train", batch_size=64, target_size=(48, 48), shuffle=True, color_mode='grayscale', class_mode='categorical', subset='validation')
 # create model structure
 emotion_model = Sequential()
 
@@ -84,11 +66,11 @@ emotion_model.compile(loss='categorical_crossentropy', optimizer=Adam(learning_r
 
 # Train the neural network/model
 emotion_model_info = emotion_model.fit_generator(
-        train_generator,
-        steps_per_epoch=28709 // batch_size,
+        training_data,
+        steps_per_epoch=22967 // batch_size,
         epochs=n_epoch,
-        validation_data=validation_generator,
-        validation_steps=7178 // batch_size)
+        validation_data=validation_set,
+        validation_steps=5741 // batch_size)
 
 # save model structure in jason file
 if os.path.exists("model"): shutil.rmtree("model")

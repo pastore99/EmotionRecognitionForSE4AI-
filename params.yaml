@@ -6,3 +6,5 @@ train:
   learning_rate: 0.0001
   decay: 1e-6
   batch_size: 64
+test:
+  seed: 145

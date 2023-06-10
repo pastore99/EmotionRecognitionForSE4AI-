@@ -13,3 +13,11 @@ stages:
     outs:
     - model/emotion_model.h5
     - model/emotion_model.json
+  evaluation:
+    cmd: python src/evaluation.py
+    deps:
+    - data/FER2013
+    - model/emotion_model.h5
+    - model/emotion_model.json
+    params:
+    - test.seed
