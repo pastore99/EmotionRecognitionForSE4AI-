@@ -21,13 +21,10 @@
         <div class="row my-4">
             <h1>Benvenuto a lezione!</h1>
             <div class="col-md-12">
-                <!--<form method="POST" action="/upload" enctype="multipart/form-data">-->
-                    <video id="video" autoplay></video>
-                    <button id="startBtn" class="btn btn-primary">Avvia registrazione</button>
-                    <button id="stopBtn" class="btn btn-secondart" disabled>Ferma registrazione</button>
-                    <input type="hidden" name="video_data" id="videoData">
-                    <input type="submit" value="Carica">
-                <!--</form>-->
+                <div class="video-wrap"><video id="video" playsinline autoplay></video></div>
+                <button id="startBtn" class="btn btn-primary">Avvia registrazione</button>
+                <canvas id="canvas" width="640" height="480"></canvas>
+
             </div>
         </div>
     </div>
