@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Homepage</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/video.js') }}"></script>
+</head>
+<body>
+    <div class="container-fluid bg-primary m-0 p-0">
+        <div class="row align-items-center py-2">
+            <div class="col-md-2"><img src="" height="60px"></div>
+            <div class="col-md-10">
+                <a type="link" class="btn btn-link text-white text-decoration-none" href="">Storico</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row my-4">
+            <h1>Benvenuto a lezione!</h1>
+            <div class="col-md-12">
+                <!--<form method="POST" action="/upload" enctype="multipart/form-data">-->
+                    <video id="video" autoplay></video>
+                    <button id="startBtn" class="btn btn-primary">Avvia registrazione</button>
+                    <button id="stopBtn" class="btn btn-secondart" disabled>Ferma registrazione</button>
+                    <input type="hidden" name="video_data" id="videoData">
+                    <input type="submit" value="Carica">
+                <!--</form>-->
+            </div>
+        </div>
+    </div>
+</body>
+</html>
