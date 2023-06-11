@@ -3,12 +3,13 @@ import shutil
 
 import cv2
 import yaml
+from dvclive.keras import DVCLiveCallback
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Flatten
 from keras.optimizers import Adam
 from keras import backend as K
 from keras.preprocessing.image import ImageDataGenerator
-
+from keras import metrics
 def recall_metric(y_true, y_pred):
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
@@ -70,7 +71,9 @@ emotion_model_info = emotion_model.fit_generator(
         steps_per_epoch=22967 // batch_size,
         epochs=n_epoch,
         validation_data=validation_set,
-        validation_steps=5741 // batch_size)
+        validation_steps=5741 // batch_size,
+        callbacks=[DVCLiveCallback()]
+)
 
 # save model structure in jason file
 if os.path.exists("model"): shutil.rmtree("model")

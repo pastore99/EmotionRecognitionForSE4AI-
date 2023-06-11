@@ -1,3 +1,4 @@
+from dvclive import Live
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import load_model, model_from_json
 from keras import backend as K
@@ -26,13 +27,17 @@ test_dir = "data/FER2013/test"
 #batch size set to 64 because the whole set doesn't fit in memory
 test_data = testDataGenerator.flow_from_directory(test_dir, batch_size=64, target_size=(48, 48), shuffle=False, color_mode='grayscale', class_mode='categorical', seed=seed)
 # Load the model
-with open('emotion_model.json', 'r') as json_file:
+with open('model/emotion_model.json', 'r') as json_file:
     loaded_model_json = json_file.read()
 
 model = model_from_json(loaded_model_json)
 
-model.load_weights('emotion_model.h5')
+model.load_weights('model/emotion_model.h5')
 model.compile(loss='categorical_crossentropy', metrics=[f1_score])
 
 #Evaluate model
-loss, acc = model.evaluate(test_data)
+loss, f1_score = model.evaluate(test_data)
+with Live(save_dvc_exp=True, dir="dvclive_eval") as live:
+    live.summary["loss"] = loss
+    live.summary["f1_score"] = f1_score
+    live.make_summary()
