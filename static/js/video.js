@@ -1,23 +1,39 @@
-var video = document.getElementById('video');
-var startBtn = document.getElementById('startBtn');
-var stopBtn = document.getElementById('stopBtn');
-var stream;
-var mediaRecorder;
-var chunks = [];
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const startBtn = document.getElementById('startBtn');
+const stopBtn = document.getElementById('stopBtn');
+const constraints = {
+    audio: true;
+    video: {
+        width: 1280, height: 720
+    }
+};
 const url = 'http:localhost:5000/preprocess';
 const intervalID;
 
-navigator.mediaDevices.getUserMedia({ video: true })
-.then(function (stream) {
-video.srcObject = stream;
-mediaRecorder = new MediaRecorder(stream);
+async function init() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        handleSuccess(stream);
 
-startBtn.addEventListener('click', function () {
-  mediaRecorder.start();
-  startBtn.disabled = true;
-  stopBtn.disabled = false;
-  intervalID = setInterval(estrapolaImmagine, 20000);
-});
+        intervalID = setInterval(estrapolaImmagine, 20000);
+    } catch (e) {
+        console.log(e.toString())
+    }
+}
+
+function handleSuccess(stream) {
+    window.stream = stream;
+    video.srcObject = stream;
+}
+
+init();
+
+var context = canvas.getContext('2d');
+startBtn.addEventListener("click", function() {
+    context.drawImage(video, 0, 0, 640, 480);
+})
+
 
 stopBtn.addEventListener('click', function () {
   mediaRecorder.stop();
@@ -25,27 +41,6 @@ stopBtn.addEventListener('click', function () {
   stopBtn.disabled = true;
   clearInterval(intervalID);
 });
-
-mediaRecorder.ondataavailable = function (e) {
-  chunks.push(e.data);
-};
-
-mediaRecorder.onstop = function () {
-  var blob = new Blob(chunks, { type: 'video/webm' });
-  chunks = [];
-
-  var videoURL = URL.createObjectURL(blob);
-  var downloadLink = document.createElement('a');
-  downloadLink.href = videoURL;
-  downloadLink.setAttribute('download', 'registrato.webm');
-  downloadLink.innerHTML = 'Download del video registrato';
-  document.body.appendChild(downloadLink);
-};
-})
-.catch(function (error) {
-    console.error('Errore durante l\'accesso alla webcam:', error);
-});
-
 
 
 function estrapolaImmagine() {
