@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
     <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
     <script src="{{ url_for('static', filename='js/video.js') }}"></script>
+    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/wevcam-easy.min.js"></script>
 </head>
 <body>
     <div class="container-fluid bg-primary m-0 p-0">
@@ -21,9 +22,9 @@
         <div class="row my-4">
             <h1>Benvenuto a lezione!</h1>
             <div class="col-md-12">
-                <div class="video-wrap"><video id="video" playsinline autoplay></video></div>
-                <button id="startBtn" class="btn btn-primary">Avvia registrazione</button>
-                <canvas id="canvas" width="640" height="480"></canvas>
+                <video id="webCam" playsinline autoplay width="800" height="600"></video>
+                <canvas id="canvas"></canvas>
+                <a download onclick="takePicture()" id="snap" class="btn btn-primary">Snap</a>
             </div>
         </div>
     </div>
