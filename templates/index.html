@@ -6,7 +6,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
     <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
     <script src="{{ url_for('static', filename='js/video.js') }}"></script>
-    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/wevcam-easy.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
+    <script src="//Microsoft.WinJS.2.0/js/base.js"></script>
+	<script src="//Microsoft.WinJS.2.0/js/ui.js"></script>
+	<!-- Demo.Html.t.MediaCapture.JS references -->
+	<link href="/css/default.css" rel="stylesheet" />
+	<script src="/js/default.js"></script>
 </head>
 <body>
     <div class="container-fluid bg-primary m-0 p-0">
@@ -22,9 +27,12 @@
         <div class="row my-4">
             <h1>Benvenuto a lezione!</h1>
             <div class="col-md-12">
-                <video id="webCam" playsinline autoplay width="800" height="600"></video>
-                <canvas id="canvas"></canvas>
-                <a download onclick="takePicture()" id="snap" class="btn btn-primary">Snap</a>
+
+              <button id="btnTakePicture">Take Photo</button>
+
+<div>
+	<div id="photoMessage" />
+</div>
             </div>
         </div>
     </div>

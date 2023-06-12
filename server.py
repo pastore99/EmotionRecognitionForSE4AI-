@@ -1,7 +1,8 @@
-from tkinter import Image
 from flask import Flask, request, jsonify
 import cv2
 import numpy as np
+import json
+import os
 
 app = Flask(__name__)
 
@@ -34,6 +35,25 @@ def preprocess():
         return jsonify({'result': preprocessed_image.tolist()})
     else:
         return jsonify({'error': 'No face detected in the image'})
+
+
+@app.route('/salva_report', methods=['POST'])
+def salva_report():
+    dati_report = request.get_json()
+    pathJson = 'prova.json'
+    dati_esistenti2 = []
+    if os.path.exists(pathJson):
+        with open(pathJson, 'r') as file:
+            dati_esistenti = json.load(file)
+
+    dati_esistenti2.append(dati_esistenti)
+    dati_esistenti2.append(dati_report)
+    print(dati_esistenti2)
+
+    with open(pathJson, 'w') as file:
+        json.dump(dati_esistenti, file)
+
+    return jsonify({'message': 'Report salvato con successo'})
 
 
 if __name__ == '__main__':
