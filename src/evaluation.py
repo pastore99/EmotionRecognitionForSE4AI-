@@ -8,7 +8,7 @@ import numpy as np
 params = yaml.safe_load(open("params.yaml"))["test"]
 seed = params["seed"]
 testDataGenerator = ImageDataGenerator(rescale=1./255)
-test_dir = "data/FER2013/test"
+test_dir = "data/preprocessed/test"
 #batch size set to 64 because the whole set doesn't fit in memory
 test_data = testDataGenerator.flow_from_directory(test_dir, batch_size=64, target_size=(48, 48), shuffle=False, color_mode='grayscale', class_mode='categorical', seed=seed)
 # Load the model

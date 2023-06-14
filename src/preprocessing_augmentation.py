@@ -1,62 +1,45 @@
+from keras.preprocessing.image import ImageDataGenerator
+from keras.utils.image_utils import img_to_array, array_to_img, load_img
 import shutil
-import sys
-import os
-
-import cv2
 import yaml
-from operator import itemgetter
-from PIL import Image
-import numpy as np
-import imgaug.augmenters as iaa
+import os
+def disgust_aug(filename, path, datagen):
+    file_stem=filename.split('.')[0]
+    img = load_img(path)  # replace 'path/to/image.jpg' with the actual path to your image
+    x = img_to_array(img)
+    x = x.reshape((1,) + x.shape)
 
-if len(sys.argv) != 2:
-    sys.stderr.write("Arguments error. Usage:\n")
-    sys.stderr.write("\tpython prepare.py data-file\n")
-    sys.exit(1)
+    print(f'{filename} is being augmented')
+    i = 0
+    for batch in datagen.flow(x, batch_size=1, save_to_dir="data/preprocessed/train/disgust", save_prefix=f'aug_{file_stem}', save_format='jpg', seed=seed):
+        i += 1
+        if i > 8:  # generate 10 augmented images
+            break
+    print(f'{filename} has been augmented')
 
-augmenter = iaa.SomeOf([
-    iaa.Affine(rotate=(-10, 10)),
-    iaa.Fliplr(0.5),
-    iaa.GaussianBlur(sigma=(0, 1.0))
-])
+
 data_dir = os.path.join("data", "FER2013", "train")
 test_dir = os.path.join("data", "FER2013", "test")
 params = yaml.safe_load(open("params.yaml"))["prepare_phase"]
 seed = params["seed"]
 
-preprocessed_folder = os.path.join("data", "preprocessedV1")
-out_train = os.path.join("data", "preprocessedV1", "train")
-out_test = os.path.join("data", "preprocessedV1", "test")
+preprocessed_folder = os.path.join("data", "preprocessed")
+out_train = os.path.join("data", "preprocessed", "train")
+out_test = os.path.join("data", "preprocessed", "test")
 if os.path.exists(preprocessed_folder):
     shutil.rmtree(preprocessed_folder)
-
+print('inizio copia del dataset')
 shutil.copytree(data_dir, out_train)
 shutil.copytree(test_dir, out_test)
+print('fine copia del dataset')
 
-#compute directory with most examples and remove from candidate augmentation
-category_folders = [os.path.join(out_train, x) for x in os.listdir(data_dir)]
-category_tuples = [(x, len(os.listdir(x))) for x in category_folders]
-max_category = max(category_tuples, key=itemgetter(1))
+datagen = ImageDataGenerator(
+    rotation_range=20,      # randomly rotate images by 20 degrees
+    zoom_range=0.1,         # randomly zoom images by up to 20%
+    horizontal_flip=True,    # randomly flip images horizontally
+    fill_mode="constant",
+    cval=0
+)
 
-category_tuples.remove(max_category)
-
-for folder_tuple in category_tuples:
-
-    folder = folder_tuple[0]
-    numImgs = folder_tuple[1]
-    numToMaxImgs = max_category[1]-numImgs
-
-    print("--- sono in cartella "+folder+"---")
-    images = []
-    for file_path in os.listdir(folder):
-        img = cv2.imread(os.path.join(folder, file_path))
-        images.append(img)
-
-    images = np.array(images)
-    augmented_images = augmenter(images=images,seed=seed)
-
-    for i, augmented_image in enumerate(augmented_images):
-        file_name = os.path.join(folder, f"augmented_image_{i}.jpeg")
-        cv2.imwrite(file_name, augmented_image)
-
-    print("--- finito preprocessing " + folder + "---")
+for filename in os.listdir('data/FER2013/train/disgust/'):
+    disgust_aug(filename, os.path.join('data/preprocessed/train/disgust/', filename), datagen)
