@@ -9,7 +9,7 @@ from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Flatten
 from keras.optimizers import Adam
 from keras import backend as K
 from keras.preprocessing.image import ImageDataGenerator
-from keras import metrics
+
 def recall_metric(y_true, y_pred):
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
@@ -68,17 +68,19 @@ emotion_model.compile(loss='categorical_crossentropy', optimizer=Adam(learning_r
 # Train the neural network/model
 emotion_model_info = emotion_model.fit_generator(
         training_data,
-        steps_per_epoch=22967 // batch_size,
+        steps_per_epoch=training_data.n // batch_size,
         epochs=n_epoch,
         validation_data=validation_set,
-        validation_steps=5741 // batch_size,
+        validation_steps=validation_set.n // batch_size,
         callbacks=[DVCLiveCallback()]
 )
 
 # save model structure in jason file
-if os.path.exists("model"): shutil.rmtree("model")
+if not os.path.exists("model"): os.mkdir("model")
+if os.listdir('model').__contains__('emotion_model.h5'):
+    os.remove('model/emotion_model.json')
+    os.remove('model/emotion_model.h5')
 
-os.mkdir("model")
 model_json = emotion_model.to_json()
 with open("model/emotion_model.json", "w") as json_file:
     json_file.write(model_json)

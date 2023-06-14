@@ -1,24 +1,9 @@
-from dvclive import Live
 from keras.preprocessing.image import ImageDataGenerator
-from keras.models import load_model, model_from_json
-from keras import backend as K
+from keras.models import model_from_json
+from dvclive import Live
+from sklearn.metrics import precision_score, recall_score, classification_report, f1_score
 import yaml
-def recall_metric(y_true, y_pred):
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
-    recall = true_positives / (possible_positives + K.epsilon())
-    return recall
-
-def precision_metric(y_true, y_pred):
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
-    precision = true_positives / (predicted_positives + K.epsilon())
-    return precision
-
-def f1_score(y_true, y_pred):
-    precision = precision_metric(y_true, y_pred)
-    recall = recall_metric(y_true, y_pred)
-    return 2*((precision*recall)/(precision+recall+K.epsilon()))
+import numpy as np
 
 params = yaml.safe_load(open("params.yaml"))["test"]
 seed = params["seed"]
@@ -36,8 +21,24 @@ model.load_weights('model/emotion_model.h5')
 model.compile(loss='categorical_crossentropy', metrics=[f1_score])
 
 #Evaluate model
-loss, f1_score = model.evaluate(test_data)
-with Live(save_dvc_exp=True, dir="dvclive_eval") as live:
-    live.summary["loss"] = loss
-    live.summary["f1_score"] = f1_score
-    live.make_summary()
+predictions = model.predict_generator(test_data)
+predicted_labels = np.argmax(predictions, axis=1)
+
+# Get true labels
+true_labels = test_data.classes
+class_labels = list(test_data.class_indices.keys())
+
+#extract overall metrics
+f1_score = f1_score(y_true=true_labels, y_pred=predicted_labels, average="macro")
+precision = precision_score(y_true=true_labels, y_pred=predicted_labels, average="macro")
+recall = recall_score(y_true=true_labels, y_pred=predicted_labels, average="macro")
+report = classification_report(y_true=true_labels, y_pred=predicted_labels, target_names=class_labels, output_dict=True)
+
+with Live(resume=True) as live:
+    live.summary = live.read_latest()
+    live.summary['test'] = {}
+    live.summary['test']['precision'] = precision
+    live.summary['test']['recall'] = recall
+    live.summary['test']['f1_score'] = f1_score
+
+    live.log_sklearn_plot("confusion_matrix", true_labels, predicted_labels)
