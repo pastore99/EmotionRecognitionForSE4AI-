@@ -1,47 +1,32 @@
-$(document).ready(function(){
-    var webCamElement = document.getElementById("camera");
-    var canvasElement = document.getElementById("canvas");
-    const webcam = new Webcam(webCamElement, 'user', canvasElement, null);
+const video = document.getElementById('videoElement');
+const startButton = document.getElementById('startButton');
 
-    //$('#camera').style.display="none";
-    //$('#camera').attr('visibility', 'hidden');
-    //$('#camera').attr('display', 'block');
+// Opzioni per l'acquisizione video
+const constraints = { video: true };
 
-    $('#camera').css('visibility', 'hidden');
-
-    webcam.start();
-
-     $('#checker').click(function(){
-        picture = webcam.snap();
-        alert(picture);
-        $.post('TestCamera', {param: picture}, function(response){
-            if (response === 'error'){
-                alert('Error you should stay in front of camera');
-            }else{
-                window.location.replace('QuestionAndAnalyze.jsp'); /* redirect*/
-            }
-        }); /*END servletCall*/
-    }); /*END click*/
-
-});/* END ready*/
-
-function takePicture() {
-    let picture = webcam.snap();
-    document.querySelector("a").href = picture;
+// Funzione per avviare l'acquisizione video
+function startVideo() {
+  navigator.mediaDevices.getUserMedia(constraints)
+    .then((stream) => {
+      document.getElementById('videoElement').srcObject = stream;
+    })
+    .catch((error) => {
+      console.error('Errore nell\'acquisizione video:', error);
+    });
 }
 
-function estrapolaImmagine() {
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+function takeSnapshot() {
+  const canvas = document.createElement('canvas');
+  canvas.width = videoElement.videoWidth;
+  canvas.height = videoElement.videoHeight;
 
-    // Disegna il frame corrente del video sul canvas
-    const context = canvas.getContext('2d');
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const context = canvas.getContext('2d');
+  context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
-    // Ottieni l'URL dell'immagine dal canvas
-    const imageURL = canvas.toDataURL();
-    fetch(url, {
+  const imageDataURL = canvas.toDataURL('image/png');
+  //Inserire l'url del servizio
+  const url = '';
+  fetch(url, {
         method: 'POST',
         headers: {
             'Cotnent-type': 'application/json'
@@ -52,24 +37,5 @@ function estrapolaImmagine() {
     })
     .then(response => response.json())
     .then(data => {console.log(data)})
-    ,catch(error => {console.error('Errore: ', error)})
+    .catch(error => {console.error('Errore: ', error.toString())})
 }
-
-app.onloaded = function () {
-	btnTakePicture.addEventListener("click", takePicture_click);
-}
-function takePicture_click(args) {
-	var captureUI = new Windows.Media.Capture.CameraCaptureUI();
-	captureUI.captureFileAsync(Windows.Media.Capture.CameraCaptureUIMode.photo)
-		.done(function (capturedItem) {
-			if (capturedItem) {
-				photoMessage.innerHTML = "Immagine catturata.";
-			}
-			else {
-				photoMessage.innerHTML = "Operazione cancellata dall'utente."
-			}
-		}, function (err) {
-			photoMessage.innerHTML = "Qualcosa è andato storto.";
-		});
-}
-

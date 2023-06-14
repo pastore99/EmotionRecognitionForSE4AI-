@@ -6,12 +6,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
     <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
     <script src="{{ url_for('static', filename='js/video.js') }}"></script>
-    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
     <script src="//Microsoft.WinJS.2.0/js/base.js"></script>
 	<script src="//Microsoft.WinJS.2.0/js/ui.js"></script>
-	<!-- Demo.Html.t.MediaCapture.JS references -->
 	<link href="/css/default.css" rel="stylesheet" />
-	<script src="/js/default.js"></script>
 </head>
 <body>
     <div class="container-fluid bg-primary m-0 p-0">
@@ -26,14 +23,9 @@
     <div class="container">
         <div class="row my-4">
             <h1>Benvenuto a lezione!</h1>
-            <div class="col-md-12">
-
-              <button id="btnTakePicture">Take Photo</button>
-
-<div>
-	<div id="photoMessage" />
-</div>
-            </div>
+            <video id="videoElement" width="720" height="480" autoplay></video>
+            <button id="startButton" onclick="startVideo();">Avvia Webcam</button>
+            <button id="snapshotButton" onclick="takeSnapshot();">Scatta foto</button>
         </div>
     </div>
 </body>
