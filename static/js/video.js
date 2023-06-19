@@ -17,23 +17,26 @@ function startVideo() {
 
 function takeSnapshot() {
   const canvas = document.createElement('canvas');
-  canvas.width = videoElement.videoWidth;
-  canvas.height = videoElement.videoHeight;
+  canvas.width = document.getElementById('videoElement').videoWidth;
+  canvas.height = document.getElementById('videoElement').videoHeight;
 
   const context = canvas.getContext('2d');
-  context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+  context.drawImage(document.getElementById('videoElement'), 0, 0, canvas.width, canvas.height);
 
-  const imageDataURL = canvas.toDataURL('image/png');
+  var imageDataURL = canvas.toDataURL()
   //Inserire l'url del servizio
-  const url = '';
+  const url = 'http://127.0.0.1:5001/preprocessBase64';
+   const data = {
+    image: imageDataURL
+  };
+   console.log(data.toString() + "********************")
   fetch(url, {
         method: 'POST',
         headers: {
-            'Cotnent-type': 'application/json'
-        },
-        body: {
-            'Image': imageURL
-        }
+        'Content-Type': 'application/json'
+         },
+        body: JSON.stringify(data)
+
     })
     .then(response => response.json())
     .then(data => {console.log(data)})
