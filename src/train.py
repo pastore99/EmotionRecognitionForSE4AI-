@@ -35,10 +35,16 @@ learning_rate = params["learning_rate"]
 decay = params["decay"]
 batch_size = params["batch_size"]
 # Initialize image data generator with rescaling
-train_data_gen = ImageDataGenerator(rescale=1./255, validation_split=0.2)
+train_data_gen = ImageDataGenerator(rescale=1./255,          # rescale matrix values
+                                    rotation_range=10,       # randomly rotate images by 10 degrees
+                                    zoom_range=0.05,         # randomly zoom images by up to 20%
+                                    horizontal_flip=True,    # randomly flip images horizontally
+                                    fill_mode="constant",
+                                    cval=0,
+                                    validation_split=0.2)
 
 training_data = train_data_gen.flow_from_directory("data/preprocessed/train", batch_size=64, target_size=(48, 48), shuffle=True, color_mode='grayscale', class_mode='categorical', subset='training',seed=seed)
-validation_set = train_data_gen.flow_from_directory("data/preprocessed/train", batch_size=64, target_size=(48, 48), shuffle=True, color_mode='grayscale', class_mode='categorical', subset='validation')
+validation_set = train_data_gen.flow_from_directory("data/preprocessed/train", batch_size=64, target_size=(48, 48), shuffle=True, color_mode='grayscale', class_mode='categorical', subset='validation', seed=seed-1)
 # create model structure
 emotion_model = Sequential()
 
@@ -57,8 +63,6 @@ emotion_model.add(Flatten())
 emotion_model.add(Dense(1024, activation='relu'))
 emotion_model.add(Dropout(0.5))
 emotion_model.add(Dense(7, activation='softmax'))
-
-cv2.ocl.setUseOpenCL(False)
 
 print(type(decay), type(learning_rate))
 

@@ -5,7 +5,7 @@ import yaml
 import os
 def disgust_aug(filename, path, datagen):
     file_stem=filename.split('.')[0]
-    img = load_img(path)  # replace 'path/to/image.jpg' with the actual path to your image
+    img = load_img(path)
     x = img_to_array(img)
     x = x.reshape((1,) + x.shape)
 
