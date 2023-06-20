@@ -66,6 +66,7 @@ emotion_model.add(Dense(7, activation='softmax'))
 
 print(type(decay), type(learning_rate))
 
+cv2.ocl.setUseOpenCL(False)
 
 emotion_model.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate=learning_rate, decay=float(decay)), metrics=[f1_score])
 
