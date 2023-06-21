@@ -6,17 +6,35 @@ import json
 import os
 import io
 import base64
-import tensorflow as tf
+from keras.models import model_from_json
+from datetime import datetime
 
-# model = tf.keras.models.load_model("percorso file h5")
+data_corrente = datetime.now().date()
+i = 0
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:5000"}})
+
+emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
+
+
+# load json and create model
+#def loadModel():
+    #json_file = open('model/emotion_model.json', 'r')
+    #loaded_model_json = json_file.read()
+    #json_file.close()
+    #emotion_model = model_from_json(loaded_model_json)
+    # load weights into new model
+    #emotion_model.load_weights("model/emotion_model.h5")
+    #print("Loaded model from disk")
+
 
 def convert_base64_to_bytes(base64_data):
     image_data = base64.b64decode(base64_data)
     bytes_io = io.BytesIO(image_data)
     return bytes_io.getvalue()
+
+
 def base64_to_image(base64_string):
     # Rimuovi l'intestazione "data:image/jpeg;base64," o "data:image/png;base64,"
     if base64_string.startswith("data:image/jpeg;base64,"):
@@ -49,7 +67,7 @@ def preprocess_image(image):
         return None
 
 
-@app.route('/preprocess', methods=['POST']) #riceve un immagine e la preprocessa
+@app.route('/preprocess', methods=['POST'])  # riceve un immagine e la preprocessa
 def preprocess():
     if 'image' not in request.files:
         return jsonify({'error': 'nessun file di immagine ricevuto bye bye'})
@@ -73,14 +91,13 @@ def preprocessBase64():
     image = base64_to_image(base64_image)
     if image is None:
         return jsonify({'error': 'Errore durante la decodifica dell\'immagine'})
-
     preprocessed_image = preprocess_image(image)
 
     if preprocessed_image is not None:
         # Esempio: Salva l'immagine preprocessata su disco
         preprocessed_image_path = "prova.jpg"
         cv2.imwrite(preprocessed_image_path, preprocessed_image)
-
+        #emotion_prediction = emotion_model.predict(preprocessed_image)
         return jsonify({'result': 'Immagine preprocessata salvata correttamente'})
     else:
         return jsonify({'error': 'Nessun volto riconosciuto nell\'immagine'})
@@ -89,7 +106,7 @@ def preprocessBase64():
 @app.route('/salva_report', methods=['POST'])
 def salva_report():
     dati_report = request.get_json()
-    pathJson = 'prova.json'  # il file json avra nel nome un identificativo che cambierà in base alla lezione, questo per permettere la creazione di charts per ogni lezione
+    pathJson = 'report' + data_corrente + 'lezione_' + i + + +'.json'  # il file json avra nel nome un identificativo che cambierà in base alla lezione, questo per permettere la creazione di charts per ogni lezione
     dati_esistenti2 = []
     if os.path.exists(pathJson):
         with open(pathJson, 'r') as file:

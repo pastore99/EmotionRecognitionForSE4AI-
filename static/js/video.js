@@ -14,9 +14,9 @@ function startVideo() {
     .catch((error) => {
       console.error('Errore nell\'acquisizione video:', error);
     });
-    startButton.classList.add('d-none');
-    stopButton.classList.remove('d-none');
-    intervalID = setInterval(takeSnapshot, 20000);
+    document.getElementById('startButton').classList.add('d-none');
+    document.getElementById('stopButton').classList.remove('d-none');
+    intervalID = setInterval(takeSnapshot, 20000/4);
 }
 
 function takeSnapshot() {
@@ -44,10 +44,12 @@ function takeSnapshot() {
     .then(response => response.json())
     .then(data => {console.log(data)})
     .catch(error => {console.error('Errore: ', error.toString())})
+
+    console.log('foto inviata, bye bye')
 }
 
 function stopVideo() {
     clearInterval(intervalID);
-    startButton.classList.remove('d-none');
-    stopButton.classList.add('d-none');
+    document.getElementById('startButton').classList.remove('d-none');
+    document.getElementById('stopButton').classList.add('d-none');
 }
