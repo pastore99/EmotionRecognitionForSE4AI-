@@ -10,7 +10,7 @@
 <body>
     <div class="container-fluid bg-primary m-0 p-0">
         <div class="row align-items-center py-2">
-            <div class="col-md-2"><img src="" height="60px"></div>
+            <div class="col-md-2 text-center"><h3>BeHAPPY</h3></div>
             <div class="col-md-10">
                 <a type="link" class="btn btn-link text-white text-decoration-none" href="">Storico</a>
             </div>
@@ -18,12 +18,23 @@
     </div>
 
     <div class="container">
-        <div class="row my-4">
+        <div class="row align-items-center my-4">
             <h1>Storico</h1>
-            <div class="col-md-12">
-
-            </div>
+            <div class="col-md-2"><p class="m-0">Selezione la data</p></div>
+            <div class="col-md-4"><input type="date" class="form-control" id="inputData"></div>
+            <div class="col"><button type="button" class="btn btn-primary" id="btnCerca">Cerca</button></div>
         </div>
     </div>
+
+    <script>
+        var oggi = new Date();
+
+        var anno = oggi.getFullYear();
+        var mese = ("0" + (oggi.getMonth() + 1)).slice(-2);
+        var giorno = ("0" + oggi.getDate()).slice(-2);
+        var dataCorrente = anno + "-" + mese + "-" + giorno;
+
+        document.getElementById("inputData").setAttribute("max", dataCorrente);
+    </script>
 </body>
 </html>
