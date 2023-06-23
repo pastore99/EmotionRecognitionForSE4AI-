@@ -5,8 +5,9 @@ import cv2
 import yaml
 from dvclive.keras import DVCLiveCallback
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Flatten
+from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Flatten, Activation, BatchNormalization
 from keras.optimizers import Adam
+from keras.regularizers import l2
 from keras import backend as K
 from keras.preprocessing.image import ImageDataGenerator
 
@@ -47,21 +48,35 @@ training_data = train_data_gen.flow_from_directory("data/preprocessed/train", ba
 validation_set = train_data_gen.flow_from_directory("data/preprocessed/train", batch_size=64, target_size=(48, 48), shuffle=True, color_mode='grayscale', class_mode='categorical', subset='validation', seed=seed-1)
 # create model structure
 emotion_model = Sequential()
+weight_decay = 1e-4
 
-emotion_model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48, 48, 1)))
-emotion_model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
-emotion_model.add(MaxPooling2D(pool_size=(2, 2)))
-emotion_model.add(Dropout(0.25))
 
-emotion_model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
+emotion_model.add(Conv2D(64, (4, 4), padding='same', kernel_regularizer=l2(weight_decay), input_shape=(48, 48, 1)))
+emotion_model.add(Activation('relu'))
+emotion_model.add(BatchNormalization())
+emotion_model.add(Conv2D(64, (4, 4), padding='same', kernel_regularizer=l2(weight_decay)))
+emotion_model.add(Activation('relu'))
+emotion_model.add(BatchNormalization())
 emotion_model.add(MaxPooling2D(pool_size=(2, 2)))
-emotion_model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-emotion_model.add(MaxPooling2D(pool_size=(2, 2)))
-emotion_model.add(Dropout(0.25))
+emotion_model.add(Dropout(0.2))
 
+emotion_model.add(Conv2D(128, (4, 4), padding='same', kernel_regularizer=l2(weight_decay)))
+emotion_model.add(Activation('relu'))
+emotion_model.add(BatchNormalization())
+emotion_model.add(MaxPooling2D(pool_size=(2, 2)))
+emotion_model.add(Dropout(0.3))
+    
+emotion_model.add(Conv2D(128, (4, 4), padding='same', kernel_regularizer=l2(weight_decay)))
+emotion_model.add(Activation('relu'))
+emotion_model.add(BatchNormalization())
+emotion_model.add(Conv2D(128, (4, 4), padding='same', kernel_regularizer=l2(weight_decay)))
+emotion_model.add(Activation('relu'))
+emotion_model.add(BatchNormalization())
+emotion_model.add(MaxPooling2D(pool_size=(2, 2)))
+emotion_model.add(Dropout(0.4))
 emotion_model.add(Flatten())
-emotion_model.add(Dense(1024, activation='relu'))
-emotion_model.add(Dropout(0.5))
+emotion_model.add(Dense(128, activation="linear"))
+emotion_model.add(Activation('relu'))
 emotion_model.add(Dense(7, activation='softmax'))
 
 print(type(decay), type(learning_rate))
