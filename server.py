@@ -8,31 +8,17 @@ import io
 import base64
 from keras.models import model_from_json
 from datetime import datetime
+from PIL import Image
 
 data_corrente = datetime.now().date()
-i = 0
+with open('model/emotion_model.json', 'r') as json_file:
+    loaded_model_json = json_file.read()
+
+emotion_model = model_from_json(loaded_model_json)
+emotion_model.load_weights('model/emotion_model.h5')
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:5000"}})
-
-emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
-
-
-# load json and create model
-#def loadModel():
-    #json_file = open('model/emotion_model.json', 'r')
-    #loaded_model_json = json_file.read()
-    #json_file.close()
-    #emotion_model = model_from_json(loaded_model_json)
-    # load weights into new model
-    #emotion_model.load_weights("model/emotion_model.h5")
-    #print("Loaded model from disk")
-
-
-def convert_base64_to_bytes(base64_data):
-    image_data = base64.b64decode(base64_data)
-    bytes_io = io.BytesIO(image_data)
-    return bytes_io.getvalue()
 
 
 def base64_to_image(base64_string):
@@ -66,22 +52,6 @@ def preprocess_image(image):
     else:
         return None
 
-
-@app.route('/preprocess', methods=['POST'])  # riceve un immagine e la preprocessa
-def preprocess():
-    if 'image' not in request.files:
-        return jsonify({'error': 'nessun file di immagine ricevuto bye bye'})
-    image_file = request.files['image']
-    image = cv2.imdecode(np.frombuffer(image_file.read(), np.uint8), cv2.IMREAD_COLOR)
-    preprocessed_image = preprocess_image(image)
-    if preprocessed_image is not None:
-        preprocessed_image_path = r"C:\Users\Carmine\OneDrive\Desktop\provaPY\immagine.jpg"
-        cv2.imwrite(preprocessed_image_path, preprocessed_image)
-        return jsonify({'result': preprocessed_image.tolist()})
-    else:
-        return jsonify({'error': 'No face detected in the image'})
-
-
 @app.route('/preprocessBase64', methods=['POST'])
 def preprocessBase64():
     if 'image' not in request.json:
@@ -106,7 +76,7 @@ def preprocessBase64():
 @app.route('/salva_report', methods=['POST'])
 def salva_report():
     dati_report = request.get_json()
-    pathJson = 'report' + data_corrente + 'lezione_' + i + + +'.json'  # il file json avra nel nome un identificativo che cambierà in base alla lezione, questo per permettere la creazione di charts per ogni lezione
+    pathJson = 'report_' + data_corrente + 'lezione_' +'.json'  # il file json avra nel nome un identificativo che cambierà in base alla lezione, questo per permettere la creazione di charts per ogni lezione
     dati_esistenti2 = []
     if os.path.exists(pathJson):
         with open(pathJson, 'r') as file:

@@ -29,7 +29,7 @@ function takeSnapshot() {
 
   var imageDataURL = canvas.toDataURL()
   //Inserire l'url del servizio
-  const url = 'http://127.0.0.1:5001/preprocessBase64';
+  const url = 'http://127.0.0.1:5001/predict';
    const data = {
     image: imageDataURL
   };
