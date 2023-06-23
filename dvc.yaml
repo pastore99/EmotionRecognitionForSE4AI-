@@ -7,10 +7,16 @@ stages:
       - prepare_phase.seed
     outs:
       - data/preprocessed
+  preprocesslbp:
+    cmd: python src/lbp_preprocessing_script.py
+    deps:
+      - data/preprocessed
+    outs:
+      - data/preprocessed_lbp
   train:
     cmd: python src/train.py
     deps:
-    - data/preprocessed
+    - data/preprocessed_lbp
     - src/train.py
     params:
     - train.batch_size
@@ -24,7 +30,7 @@ stages:
   evaluation:
     cmd: python src/evaluation.py
     deps:
-    - data/preprocessed
+    - data/preprocessed_lbp
     - model/emotion_model.h5
     - model/emotion_model.json
     params:

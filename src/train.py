@@ -43,8 +43,8 @@ train_data_gen = ImageDataGenerator(rescale=1./255,          # rescale matrix va
                                     cval=0,
                                     validation_split=0.2)
 
-training_data = train_data_gen.flow_from_directory("data/preprocessed/train", batch_size=64, target_size=(48, 48), shuffle=True, color_mode='grayscale', class_mode='categorical', subset='training',seed=seed)
-validation_set = train_data_gen.flow_from_directory("data/preprocessed/train", batch_size=64, target_size=(48, 48), shuffle=True, color_mode='grayscale', class_mode='categorical', subset='validation', seed=seed-1)
+training_data = train_data_gen.flow_from_directory("data/preprocessed_lbp/train", batch_size=64, target_size=(48, 48), shuffle=True, color_mode='grayscale', class_mode='categorical', subset='training',seed=seed)
+validation_set = train_data_gen.flow_from_directory("data/preprocessed_lbp/train", batch_size=64, target_size=(48, 48), shuffle=True, color_mode='grayscale', class_mode='categorical', subset='validation', seed=seed-1)
 # create model structure
 emotion_model = Sequential()
 
