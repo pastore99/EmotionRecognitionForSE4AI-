@@ -14,6 +14,7 @@ data_corrente = datetime.now().date()
 with open('model/emotion_model.json', 'r') as json_file:
     loaded_model_json = json_file.read()
 
+class_labels = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
 emotion_model = model_from_json(loaded_model_json)
 emotion_model.load_weights('model/emotion_model.h5')
 
@@ -45,9 +46,10 @@ def preprocess_image(image):
         (x, y, w, h) = faces[0]
         face_image = gray_image[y:y + h, x:x + w]
         face_image = cv2.resize(face_image, (48, 48))
+        face_image = face_image.astype("float32")
+        face_image = face_image / 255.0
+        face_image = face_image.reshape((1, 48, 48, 1))
 
-        # face_image = face_image / 255.0
-        face_image = np.expand_dims(face_image, axis=-1)
         return face_image
     else:
         return None
@@ -65,10 +67,11 @@ def preprocessBase64():
 
     if preprocessed_image is not None:
         # Esempio: Salva l'immagine preprocessata su disco
-        preprocessed_image_path = "prova.jpg"
-        cv2.imwrite(preprocessed_image_path, preprocessed_image)
-        #emotion_prediction = emotion_model.predict(preprocessed_image)
-        return jsonify({'result': 'Immagine preprocessata salvata correttamente'})
+        #preprocessed_image_path = "prova.jpg"
+        #cv2.imwrite(preprocessed_image_path, preprocessed_image)
+        probabilities = emotion_model.predict(preprocessed_image)
+        emotion_prediction = class_labels[np.argmax(probabilities, axis=1)[0]]
+        return jsonify({'result': f'{emotion_prediction}'})
     else:
         return jsonify({'error': 'Nessun volto riconosciuto nell\'immagine'})
 
