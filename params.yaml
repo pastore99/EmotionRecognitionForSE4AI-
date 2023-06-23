@@ -2,9 +2,9 @@ prepare_phase:
   seed: 42
 train:
   seed: 142
-  n_epoch: 50
-  learning_rate: 0.0001
+  n_epoch: 46
+  learning_rate: 0.00013238750254462205
   decay: 1e-6
-  batch_size: 64
+  batch_size: 117
 test:
   seed: 145
