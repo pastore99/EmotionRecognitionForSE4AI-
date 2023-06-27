@@ -8,7 +8,7 @@ import io
 import base64
 from keras.models import model_from_json
 from datetime import datetime
-from PIL import Image
+
 
 emozioni = {'angry': 0, 'disgust': 0, 'fear': 0, 'happy': 0, 'neutral': 0, 'sad': 0, 'surprise': 0}
 emozioniOrari = []
