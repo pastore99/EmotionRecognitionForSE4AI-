@@ -10,7 +10,9 @@ from keras.models import model_from_json
 from datetime import datetime
 from PIL import Image
 
-data_corrente = datetime.now().date()
+emozioni = {'angry': 0, 'disgust': 0, 'fear': 0, 'happy': 0, 'neutral': 0, 'sad': 0, 'surprise': 0}
+emozioniOrari = []
+
 with open('model/emotion_model.json', 'r') as json_file:
     loaded_model_json = json_file.read()
 
@@ -54,45 +56,86 @@ def preprocess_image(image):
     else:
         return None
 
-@app.route('/preprocessBase64', methods=['POST'])
-def preprocessBase64():
+
+@app.route('/predict', methods=['POST'])
+def predict():
     if 'image' not in request.json:
         return jsonify({'error': 'Nessuna immagine ricevuta'})
 
     base64_image = request.get_json()['image']
     image = base64_to_image(base64_image)
+    status = request.get_json()['status']
     if image is None:
         return jsonify({'error': 'Errore durante la decodifica dell\'immagine'})
     preprocessed_image = preprocess_image(image)
-
+    ritorno = ""
     if preprocessed_image is not None:
         # Esempio: Salva l'immagine preprocessata su disco
-        #preprocessed_image_path = "prova.jpg"
-        #cv2.imwrite(preprocessed_image_path, preprocessed_image)
+        # preprocessed_image_path = "prova.jpg"
+        # cv2.imwrite(preprocessed_image_path, preprocessed_image)
         probabilities = emotion_model.predict(preprocessed_image)
         emotion_prediction = class_labels[np.argmax(probabilities, axis=1)[0]]
-        return jsonify({'result': f'{emotion_prediction}'})
+        aggiungi_emotion(emotion_prediction)
+        rileva_emotioni(emotion_prediction)
+        ritorno = jsonify({'result': f'{emozioni}'})
     else:
-        return jsonify({'error': 'Nessun volto riconosciuto nell\'immagine'})
+        ritorno = jsonify({'error': 'Nessun volto riconosciuto nell\'immagine'})
+    if status == 1:
+        directory = 'C:/Users/Carmine/PycharmProjects/EmotionRecognitionForSE4AI-/Report/' + datetime.now().strftime(
+            "%Y_%m_%d")
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        pathJson = directory + '/reportGenerale_' + datetime.now().strftime("%H_%M_%S") + 'lezione.json'
+        pathJson2 = directory + '/reportSpecifico_' + datetime.now().strftime("%H_%M_%S") + 'lezione.json'
+        # svuotare dizionario
+        with open(pathJson, 'w') as file:
+            json.dump(emozioni, file)
+        with open(pathJson2, 'w') as file:
+            json.dump(emozioniOrari, file)
+        print(emozioniOrari)
+    return ritorno
 
 
-@app.route('/salva_report', methods=['POST'])
-def salva_report():
-    dati_report = request.get_json()
-    pathJson = 'report_' + data_corrente + 'lezione_' +'.json'  # il file json avra nel nome un identificativo che cambierà in base alla lezione, questo per permettere la creazione di charts per ogni lezione
-    dati_esistenti2 = []
-    if os.path.exists(pathJson):
-        with open(pathJson, 'r') as file:
-            dati_esistenti = json.load(file)
+@app.route('/fileGenerale', methods=['POST'])
+def get_fileGenerale():
+    data = request.json['report']
+    directory = "C:/Users/Carmine/PycharmProjects/EmotionRecognitionForSE4AI-/Report/" + data
+    files = os.listdir(directory)
+    for file in files:
+        if file.startswith('reportGenerale'):
+            percorso_file = os.path.join(directory, file)
+            with open(percorso_file, 'r') as file2:
+                file_content = json.load(file2)
+                return jsonify(file_content)
+            break
+    return jsonify({'error': 'File not found'})
 
-    dati_esistenti2.append(dati_esistenti)
-    dati_esistenti2.append(dati_report)
-    print(dati_esistenti2)
 
-    with open(pathJson, 'w') as file:
-        json.dump(dati_esistenti, file)
+@app.route('/fileSpecifico', methods=['POST'])
+def get_fileSpecifico():
+    data = request.json['report']
+    directory = "C:/Users/Carmine/PycharmProjects/EmotionRecognitionForSE4AI-/Report/" + data
+    files = os.listdir(directory)
+    for file in files:
+        if file.startswith('reportSpecifico'):
+            percorso_file = os.path.join(directory, file)
+            print(percorso_file)
+            with open(percorso_file, 'r') as file2:
+                file_content = json.load(file2)
+                return jsonify(file_content)
+            break
+    return jsonify({'error': 'File not found'})
 
-    return jsonify({'message': 'Report salvato con successo'})
+
+def aggiungi_emotion(emotion):
+    if emotion in emozioni:
+        emozioni[emotion] += 1  # Incrementa il contatore dell'emozione
+
+
+def rileva_emotioni(emoji):
+    ora_corrente = datetime.now().strftime("%H:%M:%S")
+    emozione_ora = {emoji: ora_corrente}
+    emozioniOrari.append(emozione_ora)
 
 
 if __name__ == '__main__':

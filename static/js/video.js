@@ -16,10 +16,11 @@ function startVideo() {
     });
     document.getElementById('startButton').classList.add('d-none');
     document.getElementById('stopButton').classList.remove('d-none');
-    intervalID = setInterval(takeSnapshot, 20000/4);
+    intervalID = setInterval(takeSnapshot(0), 20000/4);
 }
 
-function takeSnapshot() {
+function takeSnapshot(stato) {
+
   const canvas = document.createElement('canvas');
   canvas.width = document.getElementById('videoElement').videoWidth;
   canvas.height = document.getElementById('videoElement').videoHeight;
@@ -31,8 +32,9 @@ function takeSnapshot() {
   //Inserire l'url del servizio
   const url = 'http://127.0.0.1:5001/predict';
    const data = {
-    image: imageDataURL
-  };
+    image: imageDataURL,
+       status: stato
+   };
   fetch(url, {
         method: 'POST',
         headers: {
@@ -44,12 +46,191 @@ function takeSnapshot() {
     .then(response => response.json())
     .then(data => {console.log(data)})
     .catch(error => {console.error('Errore: ', error.toString())})
-
     console.log('foto inviata, bye bye')
 }
 
 function stopVideo() {
     clearInterval(intervalID);
+    takeSnapshot(1)
     document.getElementById('startButton').classList.remove('d-none');
     document.getElementById('stopButton').classList.add('d-none');
+}
+
+function richiediDati(){
+    var data = document.getElementById('inputData').value;
+    data = data.replaceAll("-", "_")
+    console.log(data)
+     const url = 'http://127.0.0.1:5001/fileSpecifico';
+     var options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ report: data }),
+  };
+
+     fetch(url, options).then(function (response){
+         if(response.ok){
+             return response.json();
+         }else {
+             throw new Error('Errore nella richiesta');
+         }
+     }).then(function (data) {
+         console.log(data);
+         creaGrafico(data);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+
+}
+
+function creaGrafico(data) {
+  var chartData = [['Orario', 'Alunno 1']];
+
+  data.forEach(function (element) {
+      if (element.hasOwnProperty('surprise')) {
+           try {
+               var dataString = element.surprise;
+               console.log(dataString);
+               var parts = dataString.split(":");
+               var ore = parseInt(parts[0], 10);
+               var minuti = parseInt(parts[1], 10);
+               var secondi = parseInt(parts[2], 10);
+               var date = new Date();
+               date.setHours(ore, minuti, secondi);
+               var orario = date; // Primo elemento come valore sull'asse x
+               var dato = 1; // Secondo elemento come valore sull'asse y
+               chartData.push([orario, dato]);
+           } catch (e) {
+               console.log(e)
+           }
+      } else if (element.hasOwnProperty('happy')) {
+           try {
+               var dataString = element.happy;
+               console.log(dataString);
+               var parts = dataString.split(":");
+               var ore = parseInt(parts[0], 10);
+               var minuti = parseInt(parts[1], 10);
+               var secondi = parseInt(parts[2], 10);
+               var date = new Date();
+               date.setHours(ore, minuti, secondi);
+               var orario = date; // Primo elemento come valore sull'asse x
+               var dato = 2; // Secondo elemento come valore sull'asse y
+               chartData.push([orario, dato]);
+           } catch (e) {
+               console.log(e)
+           }
+      } else if (element.hasOwnProperty('sad')) {
+           try {
+               var dataString = element.sad;
+               console.log(dataString);
+               var parts = dataString.split(":");
+               var ore = parseInt(parts[0], 10);
+               var minuti = parseInt(parts[1], 10);
+               var secondi = parseInt(parts[2], 10);
+               var date = new Date();
+               date.setHours(ore, minuti, secondi);
+               var orario = date; // Primo elemento come valore sull'asse x
+               var dato = 3; // Secondo elemento come valore sull'asse y
+               chartData.push([orario, dato]);
+           } catch (e) {
+               console.log(e)
+           }
+      } else if (element.hasOwnProperty('neutral')) {
+          try {
+              var dataString = element.neutral;
+              console.log(dataString);
+              var parts = dataString.split(":");
+              var ore = parseInt(parts[0], 10);
+              var minuti = parseInt(parts[1], 10);
+              var secondi = parseInt(parts[2], 10);
+              var date = new Date();
+              date.setHours(ore, minuti, secondi);
+              var orario = date; // Primo elemento come valore sull'asse x
+              var dato = 4; // Secondo elemento come valore sull'asse y
+              chartData.push([orario, dato]);
+          } catch (e) {
+              console.log(e)
+          }
+      } else if (element.hasOwnProperty('fear')) {
+          try {
+              var dataString = element.fear;
+              console.log(dataString);
+              var parts = dataString.split(":");
+              var ore = parseInt(parts[0], 10);
+              var minuti = parseInt(parts[1], 10);
+              var secondi = parseInt(parts[2], 10);
+              var date = new Date();
+              date.setHours(ore, minuti, secondi);
+              var orario = date; // Primo elemento come valore sull'asse x
+              var dato = 5; // Secondo elemento come valore sull'asse y
+              chartData.push([orario, dato]);
+          } catch (e) {
+              console.log(e)
+          }
+      } else if (element.hasOwnProperty('disgust')) {
+          try {
+              var dataString = element.disgust;
+              console.log(dataString);
+              var parts = dataString.split(":");
+              var ore = parseInt(parts[0], 10);
+              var minuti = parseInt(parts[1], 10);
+              var secondi = parseInt(parts[2], 10);
+              var date = new Date();
+              date.setHours(ore, minuti, secondi);
+              var orario = date; // Primo elemento come valore sull'asse x
+              var dato = 6; // Secondo elemento come valore sull'asse y
+              chartData.push([orario, dato]);
+          } catch (e) {
+              console.log(e)
+          }
+      } else if (element.hasOwnProperty('angry')) {
+          try {
+              var dataString = element.angry;
+              console.log(dataString);
+              var parts = dataString.split(":");
+              var ore = parseInt(parts[0], 10);
+              var minuti = parseInt(parts[1], 10);
+              var secondi = parseInt(parts[2], 10);
+              date.setHours(ore, minuti, secondi);
+              var orario = date; // Primo elemento come valore sull'asse x
+              var dato = 7; // Secondo elemento come valore sull'asse y
+              chartData.push([orario, dato]);
+          } catch (e) {
+              console.log(e)
+          }
+      }
+  });
+
+  var emozioni = ["Sorpreso", "Felice", "Triste", "Neutrale", "Spaventato", "Disgustato", "Arrabbiato"];
+
+  // Carica la libreria Google Charts
+  google.charts.load('current', { packages: ['corechart'] });
+  google.charts.setOnLoadCallback(function() {
+    // Crea e disegna il grafico
+    var data = google.visualization.arrayToDataTable(chartData);
+    var options = {
+      title: 'Andamento emozione alunno durante lezione',
+      hAxis: { title: 'Orario',
+      format: 'HH:mm:ss'},
+      vAxis: { title: 'Emozione' ,
+        ticks: [
+      {v: 1, f: 'Sorpreso'},
+      {v: 2, f: 'Felice'},
+      {v: 3, f: 'Triste'},
+      {v: 4, f: 'Neutrale'},
+      {v: 5, f: 'Spaventato'},
+      {v: 6, f: 'Disgustato'},
+      {v: 7, f: 'Arrabbiato'}
+    ]},
+      width: 1200,
+      height: 400,
+
+    };
+    var chart = new google.visualization.LineChart(document.getElementById('chartContainer'));
+
+    chart.draw(data, options);
+  });
 }

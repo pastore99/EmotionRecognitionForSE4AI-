@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
     <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
     <script src="{{ url_for('static', filename='js/video.js') }}"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
 </head>
 <body>
     <div class="container-fluid bg-primary m-0 p-0">
@@ -22,8 +24,11 @@
             <h1>Storico</h1>
             <div class="col-md-2"><p class="m-0">Selezione la data</p></div>
             <div class="col-md-4"><input type="date" class="form-control" id="inputData"></div>
-            <div class="col"><button type="button" class="btn btn-primary" id="btnCerca">Cerca</button></div>
+            <div class="col"><button type="button" class="btn btn-primary" id="btnCerca" onclick="richiediDati();">Cerca</button></div>
         </div>
+    </div>
+    <div class="container">
+         <div id="chartContainer"></div>
     </div>
 
     <script>
