@@ -86,6 +86,36 @@ function richiediDati(){
 
 }
 
+function richiediDatiGenerale(){
+    var data = document.getElementById('inputData').value;
+    data = data.replaceAll("-", "_")
+    console.log(data)
+     const url = 'http://127.0.0.1:5001/fileGenerale';
+     var options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ report: data }),
+  };
+
+     fetch(url, options).then(function (response){
+         if(response.ok){
+             return response.json();
+         }else {
+             throw new Error('Errore nella richiesta');
+         }
+     }).then(function (data) {
+         console.log(data);
+         creaGraficoGenerale(data);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+
+}
+
 function creaGrafico(data) {
   var chartData = [['Orario', 'Alunno 1']];
 
@@ -234,3 +264,42 @@ function creaGrafico(data) {
     chart.draw(data, options);
   });
 }
+
+function creaGraficoGenerale(jsonData) {
+  // Converte l'oggetto JSON in un array di coppie chiave-valore
+  var data = Object.entries(jsonData);
+
+  // Crea un array di array per i dati del grafico
+  var chartData = [['Chiave', 'Valore']];
+
+  // Aggiunge ogni coppia chiave-valore all'array dei dati del grafico
+  data.forEach(function (item) {
+    chartData.push(item);
+  });
+
+  // Carica la libreria Google Charts
+  google.charts.load('current', { packages: ['corechart'] });
+
+  // Chiamata di callback una volta che la libreria è stata caricata
+  google.charts.setOnLoadCallback(drawChart);
+
+  // Funzione per disegnare il grafico
+  function drawChart() {
+    // Crea un'istanza del grafico a colonne
+    var chart = new google.visualization.ColumnChart(document.getElementById('chartContainer'));
+
+    // Crea un oggetto DataTable e imposta i dati del grafico
+    var dataTable = google.visualization.arrayToDataTable(chartData);
+
+    // Opzioni del grafico
+    var options = {
+      title: 'Grafico Generale',
+      width: 1200,
+      height: 300
+    };
+
+    // Disegna il grafico utilizzando i dati e le opzioni specificate
+    chart.draw(dataTable, options);
+  }
+}
+
