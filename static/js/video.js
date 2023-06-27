@@ -25,7 +25,8 @@ function startVideo() {
 }
 
 function takeSnapshot(stato) {
-  const canvas = document.createElement('canvas');
+  try {
+      const canvas = document.createElement('canvas');
   canvas.width = document.getElementById('videoElement').videoWidth;
   canvas.height = document.getElementById('videoElement').videoHeight;
 
@@ -49,6 +50,9 @@ function takeSnapshot(stato) {
     .then(data => {console.log(data)})
     .catch(error => {console.error('Errore: ', error.toString())})
     console.log('foto inviata, bye bye')
+  }catch (e) {
+      console.log(e)
+  }
 }
 
 function stopVideo() {
@@ -133,7 +137,7 @@ function creaGrafico(data) {
                var date = new Date();
                date.setHours(ore, minuti, secondi);
                var orario = date; // Primo elemento come valore sull'asse x
-               var dato = 1; // Secondo elemento come valore sull'asse y
+               var dato = 6; // Secondo elemento come valore sull'asse y
                chartData.push([orario, dato]);
            } catch (e) {
                console.log(e)
@@ -149,7 +153,7 @@ function creaGrafico(data) {
                var date = new Date();
                date.setHours(ore, minuti, secondi);
                var orario = date; // Primo elemento come valore sull'asse x
-               var dato = 2; // Secondo elemento come valore sull'asse y
+               var dato = 7; // Secondo elemento come valore sull'asse y
                chartData.push([orario, dato]);
            } catch (e) {
                console.log(e)
@@ -165,7 +169,7 @@ function creaGrafico(data) {
                var date = new Date();
                date.setHours(ore, minuti, secondi);
                var orario = date; // Primo elemento come valore sull'asse x
-               var dato = 3; // Secondo elemento come valore sull'asse y
+               var dato = 1; // Secondo elemento come valore sull'asse y
                chartData.push([orario, dato]);
            } catch (e) {
                console.log(e)
@@ -181,7 +185,7 @@ function creaGrafico(data) {
               var date = new Date();
               date.setHours(ore, minuti, secondi);
               var orario = date; // Primo elemento come valore sull'asse x
-              var dato = 4; // Secondo elemento come valore sull'asse y
+              var dato = 5; // Secondo elemento come valore sull'asse y
               chartData.push([orario, dato]);
           } catch (e) {
               console.log(e)
@@ -197,7 +201,7 @@ function creaGrafico(data) {
               var date = new Date();
               date.setHours(ore, minuti, secondi);
               var orario = date; // Primo elemento come valore sull'asse x
-              var dato = 5; // Secondo elemento come valore sull'asse y
+              var dato = 3; // Secondo elemento come valore sull'asse y
               chartData.push([orario, dato]);
           } catch (e) {
               console.log(e)
@@ -213,7 +217,7 @@ function creaGrafico(data) {
               var date = new Date();
               date.setHours(ore, minuti, secondi);
               var orario = date; // Primo elemento come valore sull'asse x
-              var dato = 6; // Secondo elemento come valore sull'asse y
+              var dato = 2; // Secondo elemento come valore sull'asse y
               chartData.push([orario, dato]);
           } catch (e) {
               console.log(e)
@@ -228,7 +232,7 @@ function creaGrafico(data) {
               var secondi = parseInt(parts[2], 10);
               date.setHours(ore, minuti, secondi);
               var orario = date; // Primo elemento come valore sull'asse x
-              var dato = 7; // Secondo elemento come valore sull'asse y
+              var dato = 4; // Secondo elemento come valore sull'asse y
               chartData.push([orario, dato]);
           } catch (e) {
               console.log(e)
@@ -249,13 +253,13 @@ function creaGrafico(data) {
       format: 'HH:mm:ss'},
       vAxis: { title: 'Emozione' ,
         ticks: [
-      {v: 1, f: 'Sorpreso'},
-      {v: 2, f: 'Felice'},
-      {v: 3, f: 'Triste'},
-      {v: 4, f: 'Neutrale'},
-      {v: 5, f: 'Spaventato'},
-      {v: 6, f: 'Disgustato'},
-      {v: 7, f: 'Arrabbiato'}
+      {v: 1, f: 'Triste'},
+      {v: 2, f: 'Disgustato'},
+      {v: 3, f: 'Spaventato'},
+      {v: 4, f: 'Arrabbiato'},
+      {v: 5, f: 'Neutrale'},
+      {v: 6, f: 'Sorpreso'},
+      {v: 7, f: 'Felice'}
     ]},
       width: 1200,
       height: 400,
