@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Homepage</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/video.js') }}"></script>
+    <script src="//Microsoft.WinJS.2.0/js/base.js"></script>
+	<script src="//Microsoft.WinJS.2.0/js/ui.js"></script>
+	<link href="/css/default.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container-fluid bg-primary m-0 p-0">
+        <div class="row align-items-center py-2">
+            <div class="col-md-2"><img src="" height="60px"></div>
+            <div class="col-md-10">
+                <a type="link" class="btn btn-link text-white text-decoration-none" href="{{ url_for('storico') }}">Storico</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row my-4">
+            <h1>Benvenuto a lezione!</h1>
+            <video id="videoElement" width="720" height="480" autoplay></video>
+            <button id="startButton" class="btn btn-primary" onclick="startVideo();">Avvia Webcam</button>
+            <button id="stopButton" class="btn btn-secondary d-none" onclick="stopVideo();">Fine lezione</button>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+schema: '2.0'
+stages:
+  preprocessing:
+    cmd: python src/preprocessing_augmentation.py
+    deps:
+    - path: data/FER2013
+      md5: 3a60a2cf7073f0e142e1fc108e6f7949.dir
+      size: 56510189
+      nfiles: 35887
+    params:
+      params.yaml:
+        prepare_phase.seed: 42
+    outs:
+    - path: data/preprocessed
+      md5: 1d06b0c9cc13a1db4e33c12ceece85c8.dir
+      size: 61572962
+      nfiles: 39811
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/preprocessed
+      md5: 1d06b0c9cc13a1db4e33c12ceece85c8.dir
+      size: 61572962
+      nfiles: 39811
+    - path: src/train.py
+      md5: 419425850abf782cb6c783acbdceca59
+      size: 3947
+    params:
+      params.yaml:
+        train.batch_size: 76
+        train.decay: 1e-06
+        train.learning_rate: 0.0005946951973402653
+        train.n_epoch: 42
+        train.seed: 142
+    outs:
+    - path: model/emotion_model.h5
+      md5: 96211b6cdba1249d725b48c8f11e497a
+      size: 9413600
+    - path: model/emotion_model.json
+      md5: bd937d28dad34290b51c6fb6a5f0f908
+      size: 4590
+  evaluation:
+    cmd: python src/evaluation.py
+    deps:
+    - path: data/preprocessed
+      md5: 1d06b0c9cc13a1db4e33c12ceece85c8.dir
+      size: 61572962
+      nfiles: 39811
+    - path: model/emotion_model.h5
+      md5: 96211b6cdba1249d725b48c8f11e497a
+      size: 9413600
+    - path: model/emotion_model.json
+      md5: bd937d28dad34290b51c6fb6a5f0f908
+      size: 4590
+    params:
+      params.yaml:
+        test.seed: 145

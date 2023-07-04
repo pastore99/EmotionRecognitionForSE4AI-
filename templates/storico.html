@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Storico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/video.js') }}"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+</head>
+<body>
+    <div class="container-fluid bg-primary m-0 p-0">
+        <div class="row align-items-center py-2">
+            <div class="col-md-2 text-center"><h3>BeHAPPY</h3></div>
+            <div class="col-md-10">
+                <a type="link" class="btn btn-link text-white text-decoration-none" href="">Storico</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row align-items-center my-4">
+            <h1>Storico</h1>
+            <div class="col-md-2"><p class="m-0">Selezione la data</p></div>
+            <div class="col-md-4"><input type="date" class="form-control" id="inputData"></div>
+            <div class="col"><button type="button" class="btn btn-primary" id="btnCerca" onclick="richiediDati();">Cerca</button></div>
+            <div class="col"><button type="button" class="btn btn-primary" id="btnCercaGenerale" onclick="richiediDatiGenerale();">Cerca Generale</button></div>
+        </div>
+    </div>
+    <div class="container">
+         <div id="chartContainer"></div>
+    </div>
+
+    <script>
+        var oggi = new Date();
+
+        var anno = oggi.getFullYear();
+        var mese = ("0" + (oggi.getMonth() + 1)).slice(-2);
+        var giorno = ("0" + oggi.getDate()).slice(-2);
+        var dataCorrente = anno + "-" + mese + "-" + giorno;
+
+        document.getElementById("inputData").setAttribute("max", dataCorrente);
+    </script>
+</body>
+</html>
